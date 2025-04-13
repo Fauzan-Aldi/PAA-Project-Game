@@ -1,11 +1,11 @@
-# PAA-project-game
+** PAA-project-game
 
-* Note : Team Base Project 
+**Note : Team Base Project** 
 
-* Nama Proyek :
+** Nama Proyek :
   Penjelasan  :
 
-## Anggota Kelompok 
+** Anggota Kelompok 
 * 
 * 
 * 
@@ -13,7 +13,7 @@
 * 
   
 
-## 🖥️ Running Project (Proses Saat Program Dijalankan):
+** 🖥️ Running Project (Proses Saat Program Dijalankan):
 
 
 
