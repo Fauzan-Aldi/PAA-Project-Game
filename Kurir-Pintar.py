@@ -1,10 +1,14 @@
-import tkinter as tk
-from tkinter import filedialog, messagebox
+import tkinter as tk # Mengimpor modul tkinter sebagai tk untuk membuat antarmuka grafis pengguna (GUI)
+from tkinter import filedialog, messagebox # Mengimpor dialog file dan kotak pesan dari modul tkinter
+# Mengimpor PIL (Python Imaging Library) untuk manipulasi gambar
+# Image: untuk memuat gambar
+# ImageTk: untuk mengonversi gambar ke format yang bisa digunakan oleh tkinter
+# ImageDraw: untuk menggambar di atas gambar
 from PIL import Image, ImageTk, ImageDraw
-import random
-import math
-import time
-import heapq
+import random # Mengimpor modul random untuk menghasilkan angka acak
+import math # Mengimpor modul math untuk operasi matematika seperti sqrt, sin, cos, dll
+import time # Mengimpor modul time untuk pengukuran waktu (delay, timer, dll)
+import heapq # Mengimpor heapq, modul untuk struktur data heap 
 
 class SelfDrivingCarSimulator:
     def __init__(self, root):
