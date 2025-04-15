@@ -9,7 +9,7 @@ import heapq
 class SelfDrivingCarSimulator:
     def __init__(self, root):
         self.root = root
-        self.root.title("Self-Driving")
+        self.root.title("Self-Driving Car Simulator with AI")
         
         # Colors
         self.road_color = (90, 90, 90)
@@ -48,25 +48,66 @@ class SelfDrivingCarSimulator:
         self.pathfinding_var = tk.BooleanVar(value=True)
         tk.Checkbutton(frame, text="Use Pathfinding", variable=self.pathfinding_var).pack(side=tk.LEFT, padx=5)
 
-        self.canvas = tk.Canvas(self.root, width=800, height=600)
+        self.canvas = tk.Canvas(self.root, width=1000, height=700)
         self.canvas.pack()
 
         self.collision_label = tk.Label(self.root, text="Border Crossings: 0")
         self.collision_label.pack()
 
+    def show_loading_screen(self):
+        self.loading_window = tk.Toplevel(self.root)
+        self.loading_window.title("Loading")
+        self.loading_window.geometry("300x100")
+        self.loading_window.transient(self.root)  # Set to be on top of the main window
+        
+        tk.Label(self.loading_window, text="Processing image, please wait...").pack(pady=20)
+        self.loading_progress = tk.Label(self.loading_window, text="0%")
+        self.loading_progress.pack()
+        
+        self.loading_window.grab_set()  # Make it modal
+        self.root.update()
+
+    def update_loading_screen(self, progress):
+        if hasattr(self, 'loading_window'):
+            self.loading_progress.config(text=f"{progress}%")
+            self.loading_window.update()
+
+    def hide_loading_screen(self):
+        if hasattr(self, 'loading_window'):
+            self.loading_window.grab_release()
+            self.loading_window.destroy()
+
     def load_default_map(self):
-        img = Image.new("RGB", (800, 600), (255, 255, 255))
+        img = Image.new("RGB", (1000, 700), (255, 255, 255))
         draw = ImageDraw.Draw(img)
-        draw.rectangle([100, 100, 700, 500], fill=self.road_color, outline=self.border_color, width=10)
+        # Create a simple track without borders
+        draw.rectangle([100, 100, 900, 600], fill=self.road_color)
         self.process_map(img)
 
     def load_custom_map(self):
         path = filedialog.askopenfilename(filetypes=[("Images", "*.png;*.jpg")])
         if path:
             try:
+                self.show_loading_screen()
+                
+                # Simulate processing steps with progress updates
+                for i in range(1, 6):
+                    time.sleep(0.1)  # Simulate processing time
+                    self.update_loading_screen(i * 20)
+                
                 img = Image.open(path)
+                # Resize image to 1000x700 if it's not already that size
+                if img.size != (1000, 700):
+                    img = img.resize((1000, 700), Image.LANCZOS)
+                
                 self.process_map(img)
+                
+                self.update_loading_screen(100)
+                time.sleep(0.2)  # Let user see 100% before closing
+                self.hide_loading_screen()
+                
             except Exception as e:
+                self.hide_loading_screen()
                 messagebox.showerror("Error", str(e))
 
     def process_map(self, img):
@@ -77,10 +118,19 @@ class SelfDrivingCarSimulator:
         width, height = img.size
         self.track_pixels = []
         
+        # Update progress for large images
+        total_pixels = width * height
+        update_interval = total_pixels // 10  # Update progress 10 times
+        
         for x in range(width):
             for y in range(height):
                 if self.track_image.getpixel((x, y)) == self.road_color:
                     self.track_pixels.append((x, y))
+                
+                # Update progress occasionally
+                if (x * height + y) % update_interval == 0:
+                    progress = ((x * height + y) / total_pixels) * 100
+                    self.update_loading_screen(int(progress))
         
         self.reset()
 
@@ -151,14 +201,12 @@ class SelfDrivingCarSimulator:
             
             if 0 <= x < self.track_image.width and 0 <= y < self.track_image.height:
                 pixel = self.track_image.getpixel((x, y))
-                if pixel == self.border_color:
-                    readings.append(1)  # Border detected
-                elif pixel == self.road_color:
+                if pixel == self.road_color:
                     readings.append(0)  # Road
                 else:
-                    readings.append(2)  # Off-road
+                    readings.append(1)  # Off-road
             else:
-                readings.append(2)  # Out of bounds
+                readings.append(1)  # Out of bounds
                 
         return readings
 
@@ -223,11 +271,7 @@ class SelfDrivingCarSimulator:
         self.car_pos[0] += direction[0] * self.speed
         self.car_pos[1] += direction[1] * self.speed
         
-        # Track border crossings
-        if not self.is_on_road(self.car_pos):
-            self.collisions += 1
-            self.collision_label.config(text=f"Border Crossings: {self.collisions}")
-        
+        # Track border crossings (removed as per requirements)
         self.draw()
         
         # Check if reached target
