@@ -1,322 +1,364 @@
-import tkinter as tk # Mengimpor modul tkinter sebagai tk untuk membuat antarmuka grafis pengguna (GUI)
-from tkinter import filedialog, messagebox # Mengimpor dialog file dan kotak pesan dari modul tkinter
-# Mengimpor PIL (Python Imaging Library) untuk manipulasi gambar
-# Image: untuk memuat gambar
-# ImageTk: untuk mengonversi gambar ke format yang bisa digunakan oleh tkinter
-# ImageDraw: untuk menggambar di atas gambar
+import tkinter as tk
+from tkinter import filedialog, messagebox
 from PIL import Image, ImageTk, ImageDraw
-import random # Mengimpor modul random untuk menghasilkan angka acak
-import math # Mengimpor modul math untuk operasi matematika seperti sqrt, sin, cos, dll
-import time # Mengimpor modul time untuk pengukuran waktu (delay, timer, dll)
-import heapq # Mengimpor heapq, modul untuk struktur data heap 
+import random
+import math
+import heapq
 
-# Kelas utama untuk mensimulasikan mobil self-driving menggunakan AI
-class SelfDrivingCarSimulator:
+class SimulatorMobilSelfDriving:
     def __init__(self, root):
         self.root = root
-        self.root.title("Self-Driving Car Simulator with AI")  # Judul jendela aplikasi
+        self.root.title("Simulator Mobil Self-Driving")
         
-        # Warna-warna dasar untuk jalan, batas, dan target
-        self.road_color = (90, 90, 90)
-        self.border_color = (255, 255, 255)
-        self.target_color = (0, 255, 0)
+        # Warna
+        self.warna_jalan = (90, 90, 90)
+        self.warna_pinggir = (255, 255, 255)
+        self.warna_target = (0, 255, 0)
         
-        # Status awal mobil
-        self.car_pos = [100, 100]  # Posisi awal mobil
-        self.target_pos = [300, 300]  # Posisi target
-        self.is_moving = False  # Status gerak mobil
-        self.speed = 3  # Kecepatan awal
-        self.car_angle = 0  # Sudut arah mobil
-        self.collisions = 0  # Jumlah tabrakan/border crossings
-        self.track_pixels = []  # Piksel yang dianggap jalan
+        # Status mobil
+        self.posisi_mobil = [100, 100]
+        self.posisi_target = [300, 300]
+        self.sedang_bergerak = False
+        self.kecepatan = 3
+        self.sudut_mobil = 0
+        self.jumlah_tabrakan = 0
+        self.pixel_jalan = []
         
-        # Variabel untuk AI dan pathfinding
-        self.visited_positions = []  # Posisi yang sudah dikunjungi
-        self.avoidance_mode = False  # Mode menghindar aktif atau tidak
-        self.path = []  # Jalur yang dihitung oleh pathfinding
+        # Peningkatan AI
+        self.posisi_terlewati = []
+        self.mode_menghindar = False
+        self.jalur = []
         
-        # Inisialisasi tampilan antarmuka pengguna
-        self.create_widgets()
-        self.load_default_map()
+        # Setup antarmuka
+        self.buat_widget()
+        self.muat_peta_default()
 
-    # Membuat tombol-tombol dan kanvas di GUI
-    def create_widgets(self):
+    def buat_widget(self):
         frame = tk.Frame(self.root)
         frame.pack(pady=10)
 
-        # Tombol-tombol kontrol
-        tk.Button(frame, text="Load Default Map", command=self.load_default_map).pack(side=tk.LEFT, padx=5)
-        tk.Button(frame, text="Load Custom Map", command=self.load_custom_map).pack(side=tk.LEFT, padx=5)
-        tk.Button(frame, text="Start", command=self.start).pack(side=tk.LEFT, padx=5)
-        tk.Button(frame, text="Stop", command=self.stop).pack(side=tk.LEFT, padx=5)
+        tk.Button(frame, text="Muat Peta Default", command=self.muat_peta_default).pack(side=tk.LEFT, padx=5)
+        tk.Button(frame, text="Muat Peta Kustom", command=self.muat_peta_kustom).pack(side=tk.LEFT, padx=5)
+        tk.Button(frame, text="Mulai", command=self.mulai).pack(side=tk.LEFT, padx=5)
+        tk.Button(frame, text="Berhenti", command=self.berhenti).pack(side=tk.LEFT, padx=5)
         tk.Button(frame, text="Reset", command=self.reset).pack(side=tk.LEFT, padx=5)
-        tk.Button(frame, text="Randomize", command=self.randomize_positions).pack(side=tk.LEFT, padx=5)
+        tk.Button(frame, text="Acak Posisi", command=self.acak_posisi).pack(side=tk.LEFT, padx=5)
         
-        # Checkbox untuk mengaktifkan pathfinding
-        self.pathfinding_var = tk.BooleanVar(value=True)
-        tk.Checkbutton(frame, text="Use Pathfinding", variable=self.pathfinding_var).pack(side=tk.LEFT, padx=5)
+        self.var_pencarian_jalur = tk.BooleanVar(value=True)
+        tk.Checkbutton(frame, text="Gunakan Pencarian Jalur", variable=self.var_pencarian_jalur).pack(side=tk.LEFT, padx=5)
 
-        # Kanvas tempat peta dan mobil akan digambar
-        self.canvas = tk.Canvas(self.root, width=1000, height=700)
+        self.canvas = tk.Canvas(self.root, width=800, height=600)
         self.canvas.pack()
 
-        # Label jumlah tabrakan
-        self.collision_label = tk.Label(self.root, text="Border Crossings: 0")
-        self.collision_label.pack()
+        self.label_tabrakan = tk.Label(self.root, text="Pelanggaran Batas: 0")
+        self.label_tabrakan.pack()
 
-    # Menampilkan layar loading saat memproses gambar
-    def show_loading_screen(self):
-        self.loading_window = tk.Toplevel(self.root)
-        self.loading_window.title("Loading")
-        self.loading_window.geometry("300x100")
-        self.loading_window.transient(self.root)
+    def tampilkan_loading(self):
+        """Menampilkan layar loading"""
+        self.loading_screen = tk.Toplevel(self.root)
+        self.loading_screen.title("Memproses Peta")
+        self.loading_screen.geometry("300x100")
+        self.loading_screen.resizable(False, False)
         
-        tk.Label(self.loading_window, text="Processing image, please wait...").pack(pady=20)
-        self.loading_progress = tk.Label(self.loading_window, text="0%")
-        self.loading_progress.pack()
+        # Pusatkan window loading
+        x = self.root.winfo_x() + (self.root.winfo_width() // 2) - 150
+        y = self.root.winfo_y() + (self.root.winfo_height() // 2) - 50
+        self.loading_screen.geometry(f"+{x}+{y}")
         
-        self.loading_window.grab_set()
+        tk.Label(self.loading_screen, text="Sedang memproses peta...").pack(pady=10)
+        self.progress = tk.Label(self.loading_screen, text="0%")
+        self.progress.pack()
+        
+        # Buat progress bar sederhana
+        self.progress_bar = tk.Canvas(self.loading_screen, width=250, height=20, bg="white")
+        self.progress_bar.pack()
+        self.progress_bar.create_rectangle(0, 0, 0, 20, fill="blue", tags="progress")
+        
+        self.loading_screen.grab_set()  # Modal dialog
         self.root.update()
 
-    # Mengupdate progres loading
-    def update_loading_screen(self, progress):
-        if hasattr(self, 'loading_window'):
-            self.loading_progress.config(text=f"{progress}%")
-            self.loading_window.update()
+    def perbarui_loading(self, persentase):
+        """Memperbarui tampilan loading screen"""
+        if hasattr(self, 'loading_screen'):
+            self.progress_bar.coords("progress", 0, 0, 250 * (persentase/100), 20)
+            self.progress.config(text=f"{persentase}%")
+            self.loading_screen.update()
 
-    # Menutup layar loading
-    def hide_loading_screen(self):
-        if hasattr(self, 'loading_window'):
-            self.loading_window.grab_release()
-            self.loading_window.destroy()
+    def sembunyikan_loading(self):
+        """Menghilangkan layar loading"""
+        if hasattr(self, 'loading_screen'):
+            self.loading_screen.grab_release()
+            self.loading_screen.destroy()
+            del self.loading_screen
 
-    # Memuat peta default (jalur persegi panjang)
-    def load_default_map(self):
-        img = Image.new("RGB", (1000, 700), (255, 255, 255))
+    def muat_peta_default(self):
+        img = Image.new("RGB", (800, 600), (255, 255, 255))
         draw = ImageDraw.Draw(img)
-        draw.rectangle([100, 100, 900, 600], fill=self.road_color)
-        self.process_map(img)
+        draw.rectangle([100, 100, 700, 500], fill=self.warna_jalan, outline=self.warna_pinggir, width=10)
+        self.proses_peta_dengan_loading(img)
 
-    # Memuat peta custom dari file gambar
-    def load_custom_map(self):
-        path = filedialog.askopenfilename(filetypes=[("Images", "*.png;*.jpg")])
+    def muat_peta_kustom(self):
+        path = filedialog.askopenfilename(filetypes=[("Gambar", "*.png;*.jpg;*.jpeg")])
         if path:
             try:
-                self.show_loading_screen()
-                for i in range(1, 6):
-                    time.sleep(0.1)
-                    self.update_loading_screen(i * 20)
+                # Tampilkan loading screen
+                self.tampilkan_loading()
+                self.perbarui_loading(10)
+                
+                # Buka gambar (10-30%)
                 img = Image.open(path)
-                if img.size != (1000, 700):
-                    img = img.resize((1000, 700), Image.LANCZOS)
-                self.process_map(img)
-                self.update_loading_screen(100)
-                time.sleep(0.2)
-                self.hide_loading_screen()
+                self.perbarui_loading(30)
+                
+                # Proses peta dengan progress simulasi
+                self.proses_peta_dengan_loading(img)
+                
+                # Sembunyikan loading screen ketika selesai
+                self.sembunyikan_loading()
+                
             except Exception as e:
-                self.hide_loading_screen()
-                messagebox.showerror("Error", str(e))
+                if hasattr(self, 'loading_screen'):
+                    self.sembunyikan_loading()
+                messagebox.showerror("Error", f"Gagal memuat peta: {str(e)}")
 
-    # Proses gambar dan deteksi piksel jalan
-    def process_map(self, img):
-        self.track_image = img.convert("RGB")
-        self.tk_image = ImageTk.PhotoImage(self.track_image)
-        self.canvas.create_image(0, 0, image=self.tk_image, anchor=tk.NW)
+    def proses_peta_dengan_loading(self, img):
+        """Proses peta dengan progress bar"""
+        self.gambar_jalan = img.convert("RGB")
+        self.tk_gambar = ImageTk.PhotoImage(self.gambar_jalan)
+        self.canvas.create_image(0, 0, image=self.tk_gambar, anchor=tk.NW)
         
-        width, height = img.size
-        self.track_pixels = []
+        lebar, tinggi = img.size
+        self.pixel_jalan = []
+        total_pixel = lebar * tinggi
+        pixel_diproses = 0
         
-        total_pixels = width * height
-        update_interval = total_pixels // 10
-        
-        for x in range(width):
-            for y in range(height):
-                if self.track_image.getpixel((x, y)) == self.road_color:
-                    self.track_pixels.append((x, y))
-                if (x * height + y) % update_interval == 0:
-                    progress = ((x * height + y) / total_pixels) * 100
-                    self.update_loading_screen(int(progress))
+        for x in range(lebar):
+            for y in range(tinggi):
+                if self.gambar_jalan.getpixel((x, y)) == self.warna_jalan:
+                    self.pixel_jalan.append((x, y))
+                
+                # Update progress setiap 1000 pixel untuk menghindari lag
+                pixel_diproses += 1
+                if pixel_diproses % 1000 == 0:
+                    persentase = 30 + int((pixel_diproses / total_pixel) * 70)
+                    self.perbarui_loading(persentase)
         
         self.reset()
+        self.perbarui_loading(100)
 
-    # Cek apakah posisi berada di jalan
-    def is_on_road(self, pos):
+    def apakah_di_jalan(self, pos):
         x, y = int(pos[0]), int(pos[1])
-        if 0 <= x < self.track_image.width and 0 <= y < self.track_image.height:
-            return self.track_image.getpixel((x, y)) == self.road_color
+        if 0 <= x < self.gambar_jalan.width and 0 <= y < self.gambar_jalan.height:
+            return self.gambar_jalan.getpixel((x, y)) == self.warna_jalan
         return False
 
-    # Fungsi pathfinding menggunakan algoritma A*
-    def calculate_path(self):
-        def heuristic(a, b):
+    def hitung_jalur(self):
+        """Algoritma A* untuk mencari jalur"""
+        def heuristik(a, b):
             return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
-        start = (int(self.car_pos[0]), int(self.car_pos[1]))
-        goal = (int(self.target_pos[0]), int(self.target_pos[1]))
+        awal = (int(self.posisi_mobil[0]), int(self.posisi_mobil[1]))
+        tujuan = (int(self.posisi_target[0]), int(self.posisi_target[1]))
         
-        neighbors = [(0,1), (1,0), (0,-1), (-1,0), (1,1), (-1,-1), (1,-1), (-1,1)]
-        close_set = set()
-        came_from = {}
-        gscore = {start:0}
-        fscore = {start:heuristic(start, goal)}
-        oheap = []
+        tetangga = [(0,1), (1,0), (0,-1), (-1,0), (1,1), (-1,-1), (1,-1), (-1,1)]
+        set_tertutup = set()
+        asal = {}
+        skor_g = {awal:0}
+        skor_f = {awal:heuristik(awal, tujuan)}
+        heap = []
         
-        heapq.heappush(oheap, (fscore[start], start))
+        heapq.heappush(heap, (skor_f[awal], awal))
         
-        while oheap:
-            current = heapq.heappop(oheap)[1]
-            if current == goal:
-                path = []
-                while current in came_from:
-                    path.append(current)
-                    current = came_from[current]
-                return path[::-1]
-            close_set.add(current)
-            for i, j in neighbors:
-                neighbor = current[0] + i, current[1] + j
-                if 0 <= neighbor[0] < self.track_image.width and 0 <= neighbor[1] < self.track_image.height:
-                    if self.track_image.getpixel(neighbor) != self.road_color:
+        while heap:
+            sekarang = heapq.heappop(heap)[1]
+            
+            if sekarang == tujuan:
+                jalur = []
+                while sekarang in asal:
+                    jalur.append(sekarang)
+                    sekarang = asal[sekarang]
+                return jalur[::-1]
+                
+            set_tertutup.add(sekarang)
+            for i, j in tetangga:
+                tetangga_pos = sekarang[0] + i, sekarang[1] + j
+                if 0 <= tetangga_pos[0] < self.gambar_jalan.width and 0 <= tetangga_pos[1] < self.gambar_jalan.height:
+                    if self.gambar_jalan.getpixel(tetangga_pos) != self.warna_jalan:
                         continue
-                    tentative_g_score = gscore[current] + heuristic(current, neighbor)
-                    if neighbor in close_set and tentative_g_score >= gscore.get(neighbor, float('inf')):
+                        
+                    skor_g_sementara = skor_g[sekarang] + heuristik(sekarang, tetangga_pos)
+                    
+                    if tetangga_pos in set_tertutup and skor_g_sementara >= skor_g.get(tetangga_pos, float('inf')):
                         continue
-                    if tentative_g_score < gscore.get(neighbor, float('inf')) or neighbor not in [i[1] for i in oheap]:
-                        came_from[neighbor] = current
-                        gscore[neighbor] = tentative_g_score
-                        fscore[neighbor] = tentative_g_score + heuristic(neighbor, goal)
-                        heapq.heappush(oheap, (fscore[neighbor], neighbor))
-        return []
+                        
+                    if skor_g_sementara < skor_g.get(tetangga_pos, float('inf')) or tetangga_pos not in [i[1] for i in heap]:
+                        asal[tetangga_pos] = sekarang
+                        skor_g[tetangga_pos] = skor_g_sementara
+                        skor_f[tetangga_pos] = skor_g_sementara + heuristik(tetangga_pos, tujuan)
+                        heapq.heappush(heap, (skor_f[tetangga_pos], tetangga_pos))
+        
+        return []  # Jalur tidak ditemukan
 
-    # Sensor mobil untuk mendeteksi sekitar (8 arah)
-    def sense_environment(self):
-        sensor_range = 30
-        angles = [0, -math.pi/4, math.pi/4, -math.pi/2, math.pi/2, 
-                 -math.pi/8, math.pi/8, -3*math.pi/4, 3*math.pi/4]
-        readings = []
+    def sensor_lingkungan(self):
+        """Sensor 8 arah yang ditingkatkan"""
+        jangkauan_sensor = 30
+        sudut_sensor = [0, -math.pi/4, math.pi/4, -math.pi/2, math.pi/2, 
+                       -math.pi/8, math.pi/8, -3*math.pi/4, 3*math.pi/4]
+        pembacaan = []
 
-        for angle_offset in angles:
-            angle = self.car_angle + angle_offset
-            x = int(self.car_pos[0] + math.cos(angle) * sensor_range)
-            y = int(self.car_pos[1] + math.sin(angle) * sensor_range)
-            if 0 <= x < self.track_image.width and 0 <= y < self.track_image.height:
-                pixel = self.track_image.getpixel((x, y))
-                readings.append(0 if pixel == self.road_color else 1)
-            else:
-                readings.append(1)
-        return readings
-
-    # Pengambilan keputusan arah berdasarkan pathfinding atau obstacle
-    def decide_direction(self, readings):
-        if self.pathfinding_var.get() and not self.path:
-            self.path = self.calculate_path()
-        if self.pathfinding_var.get() and self.path:
-            next_pos = self.path[0]
-            dx = next_pos[0] - self.car_pos[0]
-            dy = next_pos[1] - self.car_pos[1]
-            target_angle = math.atan2(dy, dx)
-            if math.hypot(dx, dy) < 10:
-                self.path.pop(0)
-            angle_diff = (target_angle - self.car_angle + math.pi) % (2*math.pi) - math.pi
-            max_steering = math.pi/6
-            return self.car_angle + max(-max_steering, min(max_steering, angle_diff))
-        front_readings = readings[:5]
-        if any(r == 1 for r in front_readings[:3]):
-            self.avoidance_mode = True
-        if self.avoidance_mode:
-            if all(r == 0 for r in front_readings[:3]):
-                self.avoidance_mode = False
-            else:
-                if readings[3] == 0:
-                    return self.car_angle - math.pi/8
-                elif readings[4] == 0:
-                    return self.car_angle + math.pi/8
+        for sudut in sudut_sensor:
+            sudut_total = self.sudut_mobil + sudut
+            x = int(self.posisi_mobil[0] + math.cos(sudut_total) * jangkauan_sensor)
+            y = int(self.posisi_mobil[1] + math.sin(sudut_total) * jangkauan_sensor)
+            
+            if 0 <= x < self.gambar_jalan.width and 0 <= y < self.gambar_jalan.height:
+                pixel = self.gambar_jalan.getpixel((x, y))
+                if pixel == self.warna_pinggir:
+                    pembacaan.append(1)  # Terdeteksi pinggir jalan
+                elif pixel == self.warna_jalan:
+                    pembacaan.append(0)  # Jalan
                 else:
-                    return self.car_angle + math.pi
-        dx = self.target_pos[0] - self.car_pos[0]
-        dy = self.target_pos[1] - self.car_pos[1]
-        target_angle = math.atan2(dy, dx)
-        angle_diff = (target_angle - self.car_angle + math.pi) % (2*math.pi) - math.pi
-        max_steering = math.pi/8
-        return self.car_angle + max(-max_steering, min(max_steering, angle_diff))
+                    pembacaan.append(2)  # Di luar jalan
+            else:
+                pembacaan.append(2)  # Keluar batas
+                
+        return pembacaan
 
-    # Fungsi untuk menggerakkan mobil
-    def move_car(self):
-        if not self.is_moving:
-            return
-        readings = self.sense_environment()
-        self.car_angle = self.decide_direction(readings)
-        front_clear = all(r == 0 for r in readings[:3])
-        self.speed = 5 if front_clear else 2
-        direction = (math.cos(self.car_angle), math.sin(self.car_angle))
-        self.car_pos[0] += direction[0] * self.speed
-        self.car_pos[1] += direction[1] * self.speed
-        self.draw()
-        if math.hypot(self.target_pos[0]-self.car_pos[0], self.target_pos[1]-self.car_pos[1]) < 20:
-            self.is_moving = False
-            messagebox.showinfo("Arrived", "Target reached successfully!")
-            return
-        self.root.after(30, self.move_car)
+    def tentukan_arah(self, pembacaan):
+        """Pengambilan keputusan canggih dengan pencarian jalur"""
+        if self.var_pencarian_jalur.get() and not self.jalur:
+            self.jalur = self.hitung_jalur()
+        
+        # Jika menggunakan pencarian jalur dan jalur tersedia
+        if self.var_pencarian_jalur.get() and self.jalur:
+            pos_berikutnya = self.jalur[0]
+            dx = pos_berikutnya[0] - self.posisi_mobil[0]
+            dy = pos_berikutnya[1] - self.posisi_mobil[1]
+            sudut_target = math.atan2(dy, dx)
+            
+            # Hapus titik yang sudah dicapai dari jalur
+            if math.hypot(dx, dy) < 10:
+                self.jalur.pop(0)
+                
+            selisih_sudut = (sudut_target - self.sudut_mobil + math.pi) % (2*math.pi) - math.pi
+            maksimal_belok = math.pi/6  # Maksimal belok 30 derajat
+            return self.sudut_mobil + max(-maksimal_belok, min(maksimal_belok, selisih_sudut))
+        
+        # Logika menghindar rintangan
+        pembacaan_depan = pembacaan[:5]
+        if any(r == 1 for r in pembacaan_depan[:3]):  # Ada rintangan di depan
+            self.mode_menghindar = True
+            
+        if self.mode_menghindar:
+            if all(r == 0 for r in pembacaan_depan[:3]):
+                self.mode_menghindar = False
+            else:
+                # Lebih memilih belok kiri (aturan lalu lintas standar)
+                if pembacaan[3] == 0:  # Kiri kosong
+                    return self.sudut_mobil - math.pi/8
+                elif pembacaan[4] == 0:  # Kanan kosong
+                    return self.sudut_mobil + math.pi/8
+                else:
+                    return self.sudut_mobil + math.pi  # Berbalik arah
+        
+        # Default: menuju target
+        dx = self.posisi_target[0] - self.posisi_mobil[0]
+        dy = self.posisi_target[1] - self.posisi_mobil[1]
+        sudut_target = math.atan2(dy, dx)
+        
+        selisih_sudut = (sudut_target - self.sudut_mobil + math.pi) % (2*math.pi) - math.pi
+        maksimal_belok = math.pi/8  # Maksimal belok 22.5 derajat
+        return self.sudut_mobil + max(-maksimal_belok, min(maksimal_belok, selisih_sudut))
 
-    # Menggambar ulang canvas
-    def draw(self):
+    def gerakkan_mobil(self):
+        if not self.sedang_bergerak:
+            return
+            
+        pembacaan = self.sensor_lingkungan()
+        self.sudut_mobil = self.tentukan_arah(pembacaan)
+        
+        # Kecepatan adaptif
+        depan_jelas = all(r == 0 for r in pembacaan[:3])
+        self.kecepatan = 5 if depan_jelas else 2
+        
+        arah = (math.cos(self.sudut_mobil), math.sin(self.sudut_mobil))
+        self.posisi_mobil[0] += arah[0] * self.kecepatan
+        self.posisi_mobil[1] += arah[1] * self.kecepatan
+        
+        # Lacak pelanggaran batas
+        if not self.apakah_di_jalan(self.posisi_mobil):
+            self.jumlah_tabrakan += 1
+            self.label_tabrakan.config(text=f"Pelanggaran Batas: {self.jumlah_tabrakan}")
+        
+        self.gambar()
+        
+        # Cek apakah sudah sampai target
+        if math.hypot(self.posisi_target[0]-self.posisi_mobil[0], self.posisi_target[1]-self.posisi_mobil[1]) < 20:
+            self.sedang_bergerak = False
+            messagebox.showinfo("Sampai", "Target berhasil dicapai!")
+            return
+            
+        self.root.after(30, self.gerakkan_mobil)
+
+    def gambar(self):
         self.canvas.delete("all")
-        self.canvas.create_image(0, 0, image=self.tk_image, anchor=tk.NW)
-        if self.pathfinding_var.get() and self.path:
-            for i in range(len(self.path)-1):
-                self.canvas.create_line(self.path[i][0], self.path[i][1], 
-                                      self.path[i+1][0], self.path[i+1][1],
+        self.canvas.create_image(0, 0, image=self.tk_gambar, anchor=tk.NW)
+        
+        # Gambar jalur jika tersedia
+        if self.var_pencarian_jalur.get() and self.jalur:
+            for i in range(len(self.jalur)-1):
+                self.canvas.create_line(self.jalur[i][0], self.jalur[i][1], 
+                                      self.jalur[i+1][0], self.jalur[i+1][1],
                                       fill="blue", width=2)
-        car_size = 15
-        points = [
-            (self.car_pos[0] + math.cos(self.car_angle) * car_size,
-             self.car_pos[1] + math.sin(self.car_angle) * car_size),
-            (self.car_pos[0] + math.cos(self.car_angle + 2*math.pi/3) * car_size,
-             self.car_pos[1] + math.sin(self.car_angle + 2*math.pi/3) * car_size),
-            (self.car_pos[0] + math.cos(self.car_angle - 2*math.pi/3) * car_size,
-             self.car_pos[1] + math.sin(self.car_angle - 2*math.pi/3) * car_size)
+        
+        # Gambar mobil (segitiga)
+        ukuran_mobil = 15
+        titik = [
+            (self.posisi_mobil[0] + math.cos(self.sudut_mobil) * ukuran_mobil,
+             self.posisi_mobil[1] + math.sin(self.sudut_mobil) * ukuran_mobil),
+            (self.posisi_mobil[0] + math.cos(self.sudut_mobil + 2*math.pi/3) * ukuran_mobil,
+             self.posisi_mobil[1] + math.sin(self.sudut_mobil + 2*math.pi/3) * ukuran_mobil),
+            (self.posisi_mobil[0] + math.cos(self.sudut_mobil - 2*math.pi/3) * ukuran_mobil,
+             self.posisi_mobil[1] + math.sin(self.sudut_mobil - 2*math.pi/3) * ukuran_mobil)
         ]
-        self.canvas.create_polygon(points, fill="blue", outline="black")
-        target_size = 20
+        self.canvas.create_polygon(titik, fill="blue", outline="black")
+        
+        # Gambar target (lingkaran besar)
+        ukuran_target = 20
         self.canvas.create_oval(
-            self.target_pos[0]-target_size, self.target_pos[1]-target_size,
-            self.target_pos[0]+target_size, self.target_pos[1]+target_size,
+            self.posisi_target[0]-ukuran_target, self.posisi_target[1]-ukuran_target,
+            self.posisi_target[0]+ukuran_target, self.posisi_target[1]+ukuran_target,
             fill="green", outline="black"
         )
 
-    # Mulai simulasi
-    def start(self):
-        if not self.is_moving:
-            self.is_moving = True
-            self.path = self.calculate_path() if self.pathfinding_var.get() else []
-            self.move_car()
+    def mulai(self):
+        if not self.sedang_bergerak:
+            self.sedang_bergerak = True
+            self.jalur = self.hitung_jalur() if self.var_pencarian_jalur.get() else []
+            self.gerakkan_mobil()
 
-    # Hentikan gerakan mobil
-    def stop(self):
-        self.is_moving = False
+    def berhenti(self):
+        self.sedang_bergerak = False
 
-    # Reset posisi dan status
     def reset(self):
-        self.stop()
-        self.car_pos = [100, 100]
-        self.target_pos = [300, 300]
-        self.car_angle = 0
-        self.collisions = 0
-        self.path = []
-        self.collision_label.config(text="Border Crossings: 0")
-        self.draw()
+        self.berhenti()
+        self.posisi_mobil = [100, 100]
+        self.posisi_target = [300, 300]
+        self.sudut_mobil = 0
+        self.jumlah_tabrakan = 0
+        self.jalur = []
+        self.label_tabrakan.config(text="Pelanggaran Batas: 0")
+        self.gambar()
 
-    # Acak posisi mobil dan target
-    def randomize_positions(self):
-        if self.track_pixels:
-            self.car_pos = list(random.choice(self.track_pixels))
-            valid = [p for p in self.track_pixels if math.dist(p, self.car_pos) > 100]
+    def acak_posisi(self):
+        if self.pixel_jalan:
+            self.posisi_mobil = list(random.choice(self.pixel_jalan))
+            valid = [p for p in self.pixel_jalan if math.dist(p, self.posisi_mobil) > 100]
             if valid:
-                self.target_pos = list(random.choice(valid))
-            self.path = self.calculate_path() if self.pathfinding_var.get() else []
-            self.draw()
+                self.posisi_target = list(random.choice(valid))
+            self.jalur = self.hitung_jalur() if self.var_pencarian_jalur.get() else []
+            self.gambar()
 
-# Jalankan program jika file ini dijalankan langsung
 if __name__ == "__main__":
     root = tk.Tk()
-    app = SelfDrivingCarSimulator(root)
+    app = SimulatorMobilSelfDriving(root)
     root.mainloop()
