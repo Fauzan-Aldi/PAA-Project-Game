@@ -9,7 +9,7 @@ import heapq
 class SelfDrivingCarSimulator:
     def __init__(self, root):
         self.root = root
-        self.root.title("Self-Driving Car Simulator with AI")
+        self.root.title("Self-Driving")
         
         # Colors
         self.road_color = (90, 90, 90)
