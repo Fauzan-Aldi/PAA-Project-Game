@@ -24,12 +24,9 @@
 - Algoritma pencarian jalur sederhana berbasis **A*** dan pelacakan piksel jalan berdasarkan warna
 
 ## 📁 Struktur Proyek
-
-smart-kurir/
-│
-├── index.html # Halaman utama aplikasi
-├── style.css # Desain dan layout antarmuka
-├── script.js # Logika simulasi dan AI navigasi
+   ─ index.html # Halaman utama aplikasi
+   ─ style.css # Desain dan layout antarmuka
+   ─ script.js # Logika simulasi dan AI navigasi
 
 ## 🚀 Cara Menjalankan
 
@@ -45,7 +42,7 @@ Langkah-langkah simulasi:
 - Klik Analisis Jalur untuk menghitung lintasan
 - Klik Start untuk memulai simulasi navigasi
   
-##  Anggota Kelompok 
+## 👨‍💻 Anggota Kelompok 
 * Fauzan Aldi - 2301020022
 * Albertus Nyam Frandis - 2301020034
 * Ilham - 2301020057
