@@ -24,9 +24,9 @@
 - Algoritma pencarian jalur sederhana berbasis **A*** dan pelacakan piksel jalan berdasarkan warna
 
 ## 📁 Struktur Proyek
-   ─ index.html # Halaman utama aplikasi
-   ─ style.css # Desain dan layout antarmuka
-   ─ script.js # Logika simulasi dan AI navigasi
+- index.html *Halaman utama aplikasi
+- style.css  *Desain dan layout antarmuka
+- script.js  *Logika simulasi dan AI navigasi
 
 ## 🚀 Cara Menjalankan
 
