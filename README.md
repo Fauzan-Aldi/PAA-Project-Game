@@ -24,15 +24,15 @@
 - Algoritma pencarian jalur sederhana berbasis **A*** dan pelacakan piksel jalan berdasarkan warna
 
 ## 📁 Struktur Proyek
-- index.html *Halaman utama aplikasi
-- style.css  *Desain dan layout antarmuka
-- script.js  *Logika simulasi dan AI navigasi
+- index.html -Halaman utama aplikasi
+- style.css  -Desain dan layout antarmuka
+- script.js  -Logika simulasi dan AI navigasi
 
 ## 🚀 Cara Menjalankan
 
 1. **Download atau clone** repositori:
    ```bash
-   git clone https://github.com/username/smart-kurir.git
+   git clone https://github.com/Fauzan-Aldi/PAA-Project-Game.git
    cd smart-kurir
 2. Buka file index.html di browser modern (Chrome/Firefox/Edge).
 
