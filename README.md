@@ -1,8 +1,49 @@
-## PAA-project-game
+## PAA Project
 
 * Note : Team Base Project
-* Nama Proyek : Simulasi Mobil Cerdas
-* Penjelasan  :  simulasi  mobil self-driving yang memanfaatkan algoritma pencarian jalur dan deteksi lingkungan untuk menavigasi peta secara otomatis dan cerdas.
+* Nama Proyek : Smart Kurir
+
+# 🚗 Smart Kurir - Self Driving Navigation Simulator
+
+**Smart Kurir** adalah aplikasi web simulasi kendaraan pintar yang dapat menavigasi secara otomatis dari titik awal ke tujuan menggunakan gambar peta sebagai lingkungannya. Sistem ini dilengkapi deteksi jalan berbasis warna, penempatan posisi acak, analisis jalur, dan animasi pergerakan mobil secara visual.
+
+## 🎯 Fitur Unggulan
+
+- 📁 Upload peta eksternal (ukuran ideal: **1000x1000 piksel**)
+- 🎲 Penempatan acak mobil dan target pada area jalan
+- 🔍 Deteksi jalur dan analisis lintasan optimal (menggunakan A* sederhana)
+- 🚀 Simulasi navigasi mobil otomatis dengan animasi
+- 📊 Panel informasi posisi, jarak, status sistem, dan jumlah piksel jalan
+- 🎨 Antarmuka modern dan responsif
+
+## 🧪 Teknologi yang Digunakan
+
+- **HTML5**, **CSS3** (Modern UI dengan efek blur & gradient)
+- **JavaScript** Vanilla (tanpa library eksternal)
+- `<canvas>` API untuk rendering visual navigasi
+- Algoritma pencarian jalur sederhana berbasis **A*** dan pelacakan piksel jalan berdasarkan warna
+
+## 📁 Struktur Proyek
+
+smart-kurir/
+│
+├── index.html # Halaman utama aplikasi
+├── style.css # Desain dan layout antarmuka
+├── script.js # Logika simulasi dan AI navigasi
+
+## 🚀 Cara Menjalankan
+
+1. **Download atau clone** repositori:
+   ```bash
+   git clone https://github.com/username/smart-kurir.git
+   cd smart-kurir
+2. Buka file index.html di browser modern (Chrome/Firefox/Edge).
+
+Langkah-langkah simulasi:
+- Unggah gambar peta jalan berwarna abu-abu (grayscale antara rgb(90,90,90) dan rgb(150,150,150))
+- Klik Acak Posisi untuk menempatkan mobil & target
+- Klik Analisis Jalur untuk menghitung lintasan
+- Klik Start untuk memulai simulasi navigasi
   
 ##  Anggota Kelompok 
 * Fauzan Aldi - 2301020022
@@ -10,8 +51,6 @@
 * Ilham - 2301020057
 * Dewa Anggar Wijaya - 2301020058
 * Roy Adiyta - 2301020093
-  
-## 🖥️ Running Project : Run
 
 
 
