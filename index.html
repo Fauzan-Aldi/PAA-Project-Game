@@ -1,47 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Mengatur karakter encoding dan viewport agar responsif di berbagai perangkat -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Judul halaman web -->
     <title>Self Driving Car </title>
+
+    <!-- Menghubungkan file CSS eksternal -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Kontainer utama -->
     <div class="container">
+
+        <!-- Bagian header yang menampilkan judul -->
         <div class="header">
             <h1>🚗 Self Driving Car</h1>
         </div>
 
+        <!-- Bagian kontrol tombol dan upload -->
         <div class="controls">
             <div class="upload-section">
+                <!-- Input untuk mengunggah gambar peta -->
                 <div class="file-input-wrapper">
                     <input type="file" id="mapInput" accept="image/*">
                     <span class="file-input-label">📁 Upload Map (1000x1000px)</span>
                 </div>
             </div>
+
+            <!-- Tombol-tombol kontrol utama -->
             <button class="btn success" id="randomizeBtn" disabled>🎲 Acak Posisi</button>
             <button class="btn warning" id="analyzeBtn" disabled>🔍 Analisis Jalur</button>
             <button class="btn" id="startBtn" disabled>🚀 Start</button>
             <button class="btn danger" id="resetBtn">🔄 Reset</button>
         </div>
 
+        <!-- Konten utama: kanvas dan panel informasi -->
         <div class="main-content">
+
+            <!-- Area untuk menampilkan peta dalam elemen canvas -->
             <div class="canvas-container">
                 <canvas id="mapCanvas" width="800" height="800"></canvas>
             </div>
             
+            <!-- Panel informasi di samping -->
             <div class="info-panel">
+
+                <!-- Menampilkan status sistem -->
                 <div class="info-section">
                     <h3>🎯 System Status</h3>
                     <div id="systemStatus">
                         <span class="status-indicator status-ready"></span>
                         Ready to upload map
                     </div>
+                    <!-- Progress bar untuk indikasi proses -->
                     <div class="progress-bar">
                         <div class="progress-fill" id="progressFill"></div>
                     </div>
                 </div>
 
+                <!-- Menampilkan informasi navigasi mobil -->
                 <div class="info-section">
                     <h3>📊 Navigation Info</h3>
                     <div id="navInfo">
@@ -52,6 +72,7 @@
                     </div>
                 </div>
 
+                <!-- Instruksi penggunaan sistem -->
                 <div class="info-section">
                     <h3>🎮 Controls</h3>
                     <div id="instructions">
@@ -61,10 +82,12 @@
                         <p>4. Klik 'Mulai' untuk memulai navigasi</p>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 
+    <!-- Menghubungkan file JavaScript eksternal -->
     <script src="/script.js">
         
     </script>

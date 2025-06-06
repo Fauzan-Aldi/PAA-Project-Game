@@ -1,9 +1,11 @@
+/* Reset default margin dan padding, serta set box-sizing agar padding dan border masuk ke ukuran elemen */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Styling dasar untuk body, termasuk font, background gradasi, padding, dan warna teks */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
@@ -12,6 +14,7 @@ body {
     color: white;
 }
 
+/* Container utama dengan lebar maksimum, background transparan blur, dan efek bayangan */
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -22,11 +25,13 @@ body {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
+/* Header bagian atas yang disejajarkan ke tengah dan diberi margin bawah */
 .header {
     text-align: center;
     margin-bottom: 30px;
 }
 
+/* Judul dalam header dengan font besar dan teks gradasi warna */
 .header h1 {
     font-size: 2.5em;
     margin-bottom: 10px;
@@ -36,6 +41,7 @@ body {
     background-clip: text;
 }
 
+/* Bagian kontrol dengan grid responsif dan jarak antar elemen */
 .controls {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -43,6 +49,7 @@ body {
     margin-bottom: 30px;
 }
 
+/* Seksi upload dengan tata letak vertikal dan rata tengah */
 .upload-section {
     display: flex;
     flex-direction: column;
@@ -50,6 +57,7 @@ body {
     gap: 15px;
 }
 
+/* Wrapper untuk input file dengan desain tombol modern */
 .file-input-wrapper {
     position: relative;
     overflow: hidden;
@@ -62,11 +70,13 @@ body {
     border: 2px solid transparent;
 }
 
+/* Efek hover pada tombol upload */
 .file-input-wrapper:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
+/* Input file disembunyikan namun tetap bisa diakses melalui wrapper */
 .file-input-wrapper input[type=file] {
     position: absolute;
     top: 0;
@@ -77,12 +87,14 @@ body {
     cursor: pointer;
 }
 
+/* Label pada input file */
 .file-input-label {
     pointer-events: none;
     color: white;
     font-weight: 600;
 }
 
+/* Tombol umum dengan desain gradasi dan efek interaksi */
 .btn {
     background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -97,29 +109,35 @@ body {
     letter-spacing: 1px;
 }
 
+/* Efek hover pada tombol */
 .btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
+/* Gaya tombol saat dinonaktifkan */
 .btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
 }
 
+/* Warna tombol untuk status sukses */
 .btn.success {
     background: linear-gradient(45deg, #56ab2f 0%, #a8e6cf 100%);
 }
 
+/* Warna tombol untuk status bahaya */
 .btn.danger {
     background: linear-gradient(45deg, #ff416c 0%, #ff4b2b 100%);
 }
 
+/* Warna tombol untuk status peringatan */
 .btn.warning {
     background: linear-gradient(45deg, #f7971e 0%, #ffd200 100%);
 }
 
+/* Tata letak utama konten dengan dua kolom: utama dan panel */
 .main-content {
     display: grid;
     grid-template-columns: 1fr 300px;
@@ -127,6 +145,7 @@ body {
     align-items: start;
 }
 
+/* Kontainer untuk kanvas, termasuk padding dan bayangan */
 .canvas-container {
     position: relative;
     background: rgba(255, 255, 255, 0.9);
@@ -135,6 +154,7 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
+/* Gaya untuk elemen kanvas peta */
 #mapCanvas {
     border: 3px solid #333;
     border-radius: 10px;
@@ -143,6 +163,7 @@ body {
     cursor: crosshair;
 }
 
+/* Panel informasi di samping */
 .info-panel {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
@@ -150,23 +171,27 @@ body {
     backdrop-filter: blur(10px);
 }
 
+/* Setiap seksi dalam panel info */
 .info-section {
     margin-bottom: 25px;
     padding-bottom: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Hilangkan border bawah di seksi terakhir */
 .info-section:last-child {
     border-bottom: none;
     margin-bottom: 0;
 }
 
+/* Judul seksi dalam panel info */
 .info-section h3 {
     color: #4ecdc4;
     margin-bottom: 15px;
     font-size: 1.3em;
 }
 
+/* Indikator status berbentuk bulat */
 .status-indicator {
     display: inline-block;
     width: 12px;
@@ -175,27 +200,32 @@ body {
     margin-right: 8px;
 }
 
+/* Warna dan efek status siap */
 .status-ready {
     background: #4ecdc4;
     box-shadow: 0 0 10px #4ecdc4;
 }
 
+/* Warna dan animasi status sedang diproses */
 .status-processing {
     background: #ffd700;
     box-shadow: 0 0 10px #ffd700;
     animation: pulse 1s infinite;
 }
 
+/* Warna dan efek status error */
 .status-error {
     background: #ff6b6b;
     box-shadow: 0 0 10px #ff6b6b;
 }
 
+/* Animasi berkedip untuk status processing */
 @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
 }
 
+/* Bar progres latar belakang */
 .progress-bar {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
@@ -204,6 +234,7 @@ body {
     margin: 10px 0;
 }
 
+/* Isi progres yang akan berubah lebar sesuai progres */
 .progress-fill {
     background: linear-gradient(45deg, #4ecdc4, #44a08d);
     height: 100%;
@@ -212,11 +243,13 @@ body {
     border-radius: 10px;
 }
 
+/* Penampilan loading di tengah dengan animasi spin */
 .loading {
     text-align: center;
     padding: 40px;
 }
 
+/* Elemen loading berputar */
 .loading::after {
     content: '';
     display: inline-block;
@@ -228,10 +261,12 @@ body {
     animation: spin 1s ease-in-out infinite;
 }
 
+/* Animasi putar loading */
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
 
+/* Notifikasi alert tengah layar dengan animasi */
 .alert {
     position: fixed;
     top: 50%;
@@ -248,6 +283,7 @@ body {
     animation: alertSlide 0.5s ease-out;
 }
 
+/* Animasi slide masuk untuk alert */
 @keyframes alertSlide {
     from {
         opacity: 0;
@@ -259,6 +295,7 @@ body {
     }
 }
 
+/* Responsif untuk layar kecil */
 @media (max-width: 768px) {
     .main-content {
         grid-template-columns: 1fr;
