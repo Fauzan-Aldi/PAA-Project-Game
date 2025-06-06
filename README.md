@@ -41,7 +41,8 @@ Langkah-langkah simulasi:
 - Klik Acak Posisi untuk menempatkan mobil & target
 - Klik Analisis Jalur untuk menghitung lintasan
 - Klik Start untuk memulai simulasi navigasi
-  
+
+## 👥 Anggota Tim
 | Nama                  | NIM        |
 | --------------------- | ---------- |
 | Fauzan Aldi           | 2301020022 |
