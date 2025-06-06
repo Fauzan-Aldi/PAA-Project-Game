@@ -49,5 +49,5 @@ Langkah-langkah simulasi:
 * Dewa Anggar Wijaya - 2301020058
 * Roy Adiyta - 2301020093
 
-Proyek ini masih dapat dikembangkan lebih lanjut.Terbuka untuk kolaborasi dari kawan-kawan!!!
+🚀 Proyek ini masih memiliki banyak potensi untuk dikembangkan lebih lanjut. Kami sangat terbuka untuk kolaborasi! Jika kamu tertarik untuk berkontribusi atau memiliki ide pengembangan, ayo bergabung dan jadikan proyek ini lebih baik bersama! 💡🤝
 
