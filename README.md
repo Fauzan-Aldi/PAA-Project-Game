@@ -42,12 +42,17 @@ Langkah-langkah simulasi:
 - Klik Analisis Jalur untuk menghitung lintasan
 - Klik Start untuk memulai simulasi navigasi
   
-## 👨‍💻 Anggota Kelompok 
-* Fauzan Aldi - 2301020022
-* Albertus Nyam Frandis - 2301020034
-* Ilham - 2301020057
-* Dewa Anggar Wijaya - 2301020058
-* Roy Adiyta - 2301020093
+| Nama                  | NIM        |
+| --------------------- | ---------- |
+| Fauzan Aldi           | 2301020022 |
+| Albertus Nyam Frandis | 2301020034 |
+| Ilham                 | 2301020057 |
+| Dewa Anggar Wijaya    | 2301020058 |
+| Roy Adiyta            | 2301020093 |
 
-Proyek ini masih memiliki banyak potensi untuk dikembangkan lebih lanjut. Kami sangat terbuka untuk kolaborasi! Jika kamu tertarik untuk berkontribusi atau memiliki ide pengembangan, ayo bergabung dan jadikan proyek ini lebih baik bersama!!!
+Terbuka untuk Kolaborasi!
+Proyek Smart Kurir masih memiliki ruang besar untuk dikembangkan lebih lanjut — baik dalam hal visualisasi, AI, maupun fitur tambahan seperti sensor virtual dan peta dinamis.
+Kami sangat terbuka untuk kolaborasi!
+Jika kamu memiliki ide, masukan, atau tertarik berkontribusi, silakan fork repositori ini atau hubungi kami melalui GitHub.
+Bersama, mari jadikan proyek ini lebih canggih dan bermanfaat!
 
