@@ -11,7 +11,7 @@
 
 - 📁 Upload peta eksternal (ukuran ideal: **1000x1000 piksel**)
 - 🎲 Penempatan acak mobil dan target pada area jalan
-- 🔍 Deteksi jalur dan analisis lintasan optimal (menggunakan A* sederhana)
+- 🔍 Deteksi jalur dan analisis lintasan optimal (menggunakan A*)
 - 🚀 Simulasi navigasi mobil otomatis dengan animasi
 - 📊 Panel informasi posisi, jarak, status sistem, dan jumlah piksel jalan
 - 🎨 Antarmuka modern dan responsif
@@ -52,7 +52,7 @@ Langkah-langkah simulasi:
 | Roy Adiyta            | 2301020093 |
 
 Terbuka untuk Kolaborasi!
-Proyek Smart Kurir masih memiliki ruang besar untuk dikembangkan lebih lanjut — baik dalam hal visualisasi, AI, maupun fitur tambahan seperti sensor virtual dan peta dinamis.
+Proyek Smart Kurir masih memiliki ruang besar untuk dikembangkan lebih lanjut baik dalam hal visualisasi, AI, maupun fitur tambahan seperti sensor virtual dan peta dinamis.
 Kami sangat terbuka untuk kolaborasi!
 Jika kamu memiliki ide, masukan, atau tertarik berkontribusi, silakan fork repositori ini atau hubungi kami melalui GitHub.
 Bersama, mari jadikan proyek ini lebih canggih dan bermanfaat!
